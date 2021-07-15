@@ -25,11 +25,11 @@ repl:
 
 .PHONY: format
 format:
-	$(PWSH) -Command "& { Get-ChildItem -Filter '*.hs' -Recurse src, app, test | ForEach-Object { stylish-haskell -i $$_.FullName } }"
+	$(PWSH) -Command "& { Get-ChildItem -Filter '*.hs' -Recurse src, test | ForEach-Object { stylish-haskell -i $$_.FullName } }"
 
 .PHONY: lint
 lint:
-	hlint src app
+	hlint src
 
 .PHONY: doc
 doc:

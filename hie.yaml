@@ -1,13 +1,10 @@
 cradle:
   cabal:
     - path: "./src"
-      component: "lib:haskell-project-template"
-
-    - path: "./app/main.hs"
-      component: "haskell-project-template:exe:app"
+      component: "lib:barbies-layered"
 
     - path: "./test/doctest"
-      component: "haskell-project-template:test:doctest"
+      component: "barbies-layered:test:doctest"
 
     - path: "./test/spec"
-      component: "haskell-project-template:test:spec"
+      component: "barbies-layered:test:spec"

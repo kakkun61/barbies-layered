@@ -10,18 +10,8 @@ jobs:
       matrix:
         ghc: ['8.6', '8.8', '8.10', '9.0']
         test: [doctest, spec]
-        continue-on-error: [false]
-        include:
-          - ghc: latest
-            test: doctest
-            continue-on-error: true
-          - ghc: latest
-            test: spec
-            continue-on-error: true
 
     runs-on: ubuntu-latest
-
-    continue-on-error: ${{ matrix.continue-on-error }}
 
     steps:
       - uses: actions/checkout@v2
@@ -30,12 +20,10 @@ jobs:
           ghc-version: ${{ matrix.ghc }}
       - uses: actions/cache@v2
         with:
-          path: $HOME/.cabal/packages
-          key: packages-${{ runner.os }}-${{ matrix.ghc }}
-      - uses: actions/cache@v2
-        with:
-          path: $HOME/.cabal/store
-          key: store-${{ runner.os }}-${{ matrix.ghc }}
+          path: |
+            $HOME/.cabal/packages
+            $HOME/.cabal/store
+          key: cabal-${{ runner.os }}-${{ matrix.ghc }}
       - run: make build-deps
       - run: make build
       - run: make ${{ matrix.test }}

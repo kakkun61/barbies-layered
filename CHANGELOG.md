@@ -1,7 +1,6 @@
-# Changelog for haskell-project-template
+# Changelog for barbies-layered
 
-## 0.1.0.0
+## Unreleased changes
 
-2021.01.01
-
-- First release.
+- `Barbies.Bare.Layered.BareB`
+- `Data.Functor.Barbie.Layered.FunctorB`
