@@ -28,6 +28,8 @@ library
   hs-source-dirs: src
   exposed-modules: Barbies.Bare.Layered
                    Data.Functor.Barbie.Layered
+                   Data.List.Barbie.Layered
+                   Data.Maybe.Barbie.Layered
   build-depends: barbies,
                  transformers
   ghc-options: -Wincomplete-uni-patterns
