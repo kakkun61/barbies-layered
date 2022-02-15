@@ -26,22 +26,24 @@ common common
 library
   import: common
   hs-source-dirs: src
-  exposed-modules: Barbies.Bare.Layered
-                   Data.Functor.Barbie.Layered
+  exposed-modules: Data.Barbie.Layered
+                   Data.Functor.Layered
                    Data.List.Barbie.Layered
+                   Data.List.NonEmpty.Barbie.Layered
                    Data.Maybe.Barbie.Layered
+                   Data.Tuple.Barbie.Layered
   build-depends: barbies,
                  transformers
-  ghc-options: -Wincomplete-uni-patterns
+  ghc-options: -Widentities
                -Wincomplete-record-updates
-               -Wmonomorphism-restriction
-               -Wmissing-exported-signatures
+               -Wincomplete-uni-patterns
                -Wmissing-export-lists
+               -Wmissing-exported-signatures
                -Wmissing-home-modules
                -Wmissing-import-lists
-               -Widentities
-               -Wredundant-constraints
+               -Wmonomorphism-restriction
                -Wpartial-fields
+               -Wredundant-constraints
                -Wno-name-shadowing
 
 test-suite doctest
@@ -61,7 +63,7 @@ test-suite spec
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   hs-source-dirs: test/spec
-  other-modules: Barbies.Bare.LayeredSpec
+  other-modules:
   build-depends: barbies-layered,
                  barbies,
                  hspec
