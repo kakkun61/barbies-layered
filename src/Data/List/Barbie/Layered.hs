@@ -1,10 +1,14 @@
+{-# LANGUAGE CPP                      #-}
 {-# LANGUAGE DeriveGeneric            #-}
 {-# LANGUAGE FlexibleInstances        #-}
 {-# LANGUAGE RankNTypes               #-}
 {-# LANGUAGE StandaloneDeriving       #-}
-{-# LANGUAGE StandaloneKindSignatures #-}
-{-# LANGUAGE TypeFamilies             #-}
+{-# LANGUAGE TypeFamilyDependencies   #-}
 {-# LANGUAGE UndecidableInstances     #-}
+
+#if __GLASGOW_HASKELL__ >= 810
+{-# LANGUAGE StandaloneKindSignatures #-}
+#endif
 
 module Data.List.Barbie.Layered
   ( List (..)
@@ -12,11 +16,17 @@ module Data.List.Barbie.Layered
 
 import Data.Barbie.Layered   (IsBarbie (Bare, pullOff, putOn))
 import Data.Functor.Identity (Identity (Identity))
-import Data.Functor.Layered  (FunctorB (bmap), TraversableB (btraverse), FoldableB (bfoldMap))
-import Data.Kind             (Type)
+import Data.Functor.Layered  (FoldableB (bfoldMap), FunctorB (bmap), TraversableB (btraverse))
 import GHC.Generics          (Generic)
 
+#if __GLASGOW_HASKELL__ >= 810
+import Data.Kind (Type)
+#endif
+
+#if __GLASGOW_HASKELL__ >= 810
 type List :: ((Type -> Type) -> Type) -> (Type -> Type) -> Type
+#endif
+
 data List a f
   = Nil
   | Cons (f (a f)) (f (List a f))
@@ -41,7 +51,7 @@ instance FunctorB a => FunctorB (List a) where
   bmap f (Cons x xs) = Cons (bmap f <$> f x) (bmap f <$> f xs)
 
 instance FoldableB a => FoldableB (List a) where
-  bfoldMap _ Nil = mempty
+  bfoldMap _ Nil         = mempty
   bfoldMap f (Cons x xs) = f (bfoldMap f <$> x) <> f (bfoldMap f <$> xs)
 
 instance TraversableB a => TraversableB (List a) where

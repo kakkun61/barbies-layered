@@ -1,10 +1,14 @@
+{-# LANGUAGE CPP                      #-}
 {-# LANGUAGE DeriveGeneric            #-}
 {-# LANGUAGE FlexibleInstances        #-}
 {-# LANGUAGE RankNTypes               #-}
 {-# LANGUAGE StandaloneDeriving       #-}
-{-# LANGUAGE StandaloneKindSignatures #-}
 {-# LANGUAGE TypeFamilies             #-}
 {-# LANGUAGE UndecidableInstances     #-}
+
+#if __GLASGOW_HASKELL__ >= 810
+{-# LANGUAGE StandaloneKindSignatures #-}
+#endif
 
 module Data.List.NonEmpty.Barbie.Layered
   ( List1 (..)
@@ -12,14 +16,20 @@ module Data.List.NonEmpty.Barbie.Layered
 
 import           Data.Barbie.Layered      (IsBarbie (Bare, pullOff, putOn))
 import           Data.Functor.Identity    (Identity (Identity))
-import           Data.Functor.Layered     (FunctorB (bmap), TraversableB (btraverse), FoldableB (bfoldMap))
-import           Data.Kind                (Type)
+import           Data.Functor.Layered     (FoldableB (bfoldMap), FunctorB (bmap), TraversableB (btraverse))
 import           Data.List.Barbie.Layered (List)
 import           Data.List.NonEmpty       (NonEmpty)
 import qualified Data.List.NonEmpty       as Base
 import           GHC.Generics             (Generic)
 
+#if __GLASGOW_HASKELL__ >= 810
+import Data.Kind (Type)
+#endif
+
+#if __GLASGOW_HASKELL__ >= 810
 type List1 :: ((Type -> Type) -> Type) -> (Type -> Type) -> Type
+#endif
+
 data List1 a f =
   (f (a f)) :| (f (List a f))
   deriving Generic

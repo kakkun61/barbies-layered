@@ -1,10 +1,14 @@
+{-# LANGUAGE CPP                      #-}
 {-# LANGUAGE DeriveGeneric            #-}
 {-# LANGUAGE FlexibleInstances        #-}
 {-# LANGUAGE RankNTypes               #-}
 {-# LANGUAGE StandaloneDeriving       #-}
-{-# LANGUAGE StandaloneKindSignatures #-}
 {-# LANGUAGE TypeFamilies             #-}
 {-# LANGUAGE UndecidableInstances     #-}
+
+#if __GLASGOW_HASKELL__ >= 810
+{-# LANGUAGE StandaloneKindSignatures #-}
+#endif
 
 module Data.Tuple.Barbie.Layered
   ( Tuple2
@@ -12,11 +16,17 @@ module Data.Tuple.Barbie.Layered
 
 import Data.Barbie.Layered   (IsBarbie (Bare, pullOff, putOn))
 import Data.Functor.Identity (Identity (Identity))
-import Data.Functor.Layered  (FunctorB (bmap), TraversableB (btraverse), FoldableB (bfoldMap))
-import Data.Kind             (Type)
+import Data.Functor.Layered  (FoldableB (bfoldMap), FunctorB (bmap), TraversableB (btraverse))
 import GHC.Generics          (Generic)
 
+#if __GLASGOW_HASKELL__ >= 810
+import Data.Kind (Type)
+#endif
+
+#if __GLASGOW_HASKELL__ >= 810
 type Tuple2 :: ((Type -> Type) -> Type) -> ((Type -> Type) -> Type) -> (Type -> Type) -> Type
+#endif
+
 data Tuple2 t1 t2 f =
   Tuple2
     { _1 :: f (t1 f)

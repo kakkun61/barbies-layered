@@ -1,11 +1,15 @@
+{-# LANGUAGE CPP                      #-}
 {-# LANGUAGE DeriveGeneric            #-}
 {-# LANGUAGE DerivingStrategies       #-}
 {-# LANGUAGE FlexibleInstances        #-}
 {-# LANGUAGE RankNTypes               #-}
 {-# LANGUAGE StandaloneDeriving       #-}
-{-# LANGUAGE StandaloneKindSignatures #-}
 {-# LANGUAGE TypeFamilies             #-}
 {-# LANGUAGE UndecidableInstances     #-}
+
+#if __GLASGOW_HASKELL__ >= 810
+{-# LANGUAGE StandaloneKindSignatures #-}
+#endif
 
 module Data.Maybe.Barbie.Layered
   ( Maybe (..)
@@ -13,13 +17,20 @@ module Data.Maybe.Barbie.Layered
 
 import           Data.Barbie.Layered   (IsBarbie (Bare, pullOff, putOn))
 import           Data.Functor.Identity (Identity (Identity))
-import           Data.Functor.Layered  (FunctorB (bmap), TraversableB (btraverse), FoldableB (bfoldMap))
-import           Data.Kind             (Type)
+import           Data.Functor.Layered  (FoldableB (bfoldMap), FunctorB (bmap), TraversableB (btraverse))
 import           GHC.Generics          (Generic)
-import           Prelude               (Applicative (pure), Eq, Ord, Read, Show, Traversable (sequenceA), ($), (<$>), Monoid (mempty))
+import           Prelude               (Applicative (pure), Eq, Monoid (mempty), Ord, Read, Show,
+                                        Traversable (sequenceA), ($), (<$>))
 import qualified Prelude
 
+#if __GLASGOW_HASKELL__ >= 810
+import Data.Kind (Type)
+#endif
+
+#if __GLASGOW_HASKELL__ >= 810
 type Maybe :: ((Type -> Type) -> Type) -> (Type -> Type) -> Type
+#endif
+
 data Maybe a f
   = Nothing
   | Just (f (a f))
@@ -44,7 +55,7 @@ instance FunctorB a => FunctorB (Maybe a) where
   bmap f (Just a) = Just $ bmap f <$> f a
 
 instance FoldableB a => FoldableB (Maybe a) where
-  bfoldMap _ Nothing = mempty
+  bfoldMap _ Nothing  = mempty
   bfoldMap f (Just a) = f (bfoldMap f <$> a)
 
 instance TraversableB a => TraversableB (Maybe a) where
