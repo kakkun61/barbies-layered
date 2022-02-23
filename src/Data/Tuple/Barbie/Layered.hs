@@ -11,13 +11,15 @@
 #endif
 
 module Data.Tuple.Barbie.Layered
-  ( Tuple2
+  ( Tuple2 (..)
   ) where
 
-import Data.Barbie.Layered   (IsBarbie (Bare, pullOff, putOn))
-import Data.Functor.Identity (Identity (Identity))
-import Data.Functor.Layered  (FoldableB (bfoldMap), FunctorB (bmap), TraversableB (btraverse))
-import GHC.Generics          (Generic)
+import Barbies.Layered             (IsBarbie (Strip, bcover, bstrip))
+import           Barbies.Layered.Functor (FunctorB (bmap))
+import Barbies.Layered.Foldable (FoldableB (bfoldMap))
+import Barbies.Layered.Traversable (TraversableB (btraverse))
+import Data.Functor.Identity       (Identity (Identity))
+import GHC.Generics                (Generic)
 
 #if __GLASGOW_HASKELL__ >= 810
 import Data.Kind (Type)
@@ -40,11 +42,11 @@ deriving instance (Eq (f (t1 f)), Eq (f (t2 f))) => Eq (Tuple2 t1 t2 f)
 deriving instance (Ord (f (t1 f)), Ord (f (t2 f))) => Ord (Tuple2 t1 t2 f)
 
 instance (IsBarbie t1, IsBarbie t2) => IsBarbie (Tuple2 t1 t2) where
-  type Bare (Tuple2 t1 t2) = (Bare t1, Bare t2)
+  type Strip (Tuple2 t1 t2) = (Strip t1, Strip t2)
 
-  pullOff (Tuple2 (Identity a1) (Identity a2)) = (pullOff a1, pullOff a2)
+  bstrip (Tuple2 (Identity a1) (Identity a2)) = (bstrip a1, bstrip a2)
 
-  putOn (a1, a2) = Tuple2 (Identity $ putOn a1) (Identity $ putOn a2)
+  bcover (a1, a2) = Tuple2 (Identity $ bcover a1) (Identity $ bcover a2)
 
 instance (FunctorB t1, FunctorB t2) => FunctorB (Tuple2 t1 t2) where
   bmap f (Tuple2 a1 a2) = Tuple2 (bmap f <$> f a1) (bmap f <$> f a2)

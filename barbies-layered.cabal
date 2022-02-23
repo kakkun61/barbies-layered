@@ -26,13 +26,23 @@ common common
 library
   import: common
   hs-source-dirs: src
-  exposed-modules: Data.Barbie.Layered
-                   Data.Functor.Layered
+  exposed-modules: Barbies.Layered
+                   Barbies.Layered.Foldable
+                   Barbies.Layered.Functor
+                   Barbies.Layered.Traversable
+                   Control.Applicative.Barbie.Layered
+                   Data.Functor.Barbie.Layered
+                   Data.List.Barbie.Bare.Layered
                    Data.List.Barbie.Layered
+                   Data.List.NonEmpty.Barbie.Bare.Layered
                    Data.List.NonEmpty.Barbie.Layered
+                   Data.Maybe.Barbie.Bare.Layered
                    Data.Maybe.Barbie.Layered
+                   Data.Tuple.Barbie.Bare.Layered
                    Data.Tuple.Barbie.Layered
   build-depends: barbies,
+                 category,
+                 pointed,
                  transformers
   ghc-options: -Widentities
                -Wincomplete-record-updates

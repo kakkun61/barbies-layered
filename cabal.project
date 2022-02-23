@@ -1,3 +1,6 @@
 packages: .
 
+package pointed
+  flags: -comonad -containers -kan-extensions -semigroupoids -semigroups -stm -tagged -transformers -unordered-containers
+
 write-ghc-environment-files: ghc8.4.4+

@@ -8,16 +8,25 @@
 
 #if __GLASGOW_HASKELL__ >= 810
 {-# LANGUAGE StandaloneKindSignatures #-}
+{-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE FlexibleContexts #-}
 #endif
 
 module Data.List.Barbie.Layered
   ( List (..)
   ) where
 
-import Data.Barbie.Layered   (IsBarbie (Bare, pullOff, putOn))
-import Data.Functor.Identity (Identity (Identity))
-import Data.Functor.Layered  (FoldableB (bfoldMap), FunctorB (bmap), TraversableB (btraverse))
-import GHC.Generics          (Generic)
+import Barbies.Layered             (IsBarbie (Strip, bcover, bstrip))
+import Barbies.Layered.Functor (FunctorB (bmap))
+import Barbies.Layered.Foldable (FoldableB (bfoldMap))
+import Barbies.Layered.Traversable (TraversableB (btraverse))
+import Data.Functor.Identity       (Identity (Identity))
+import GHC.Generics                (Generic)
+import Barbies.Bi (Flip (Flip, runFlip))
+import Prelude (Show, Read, Eq, Ord, Applicative (pure), ($), Traversable (sequenceA), (<$>), Monoid (mempty), Semigroup ((<>)), (.))
+import Data.Functor.Transformer (FunctorT (tmap))
+import Data.Functor.Barbie.Layered (Functor (fmap))
+import qualified Prelude
 
 #if __GLASGOW_HASKELL__ >= 810
 import Data.Kind (Type)
@@ -38,13 +47,13 @@ deriving instance (Eq (f (a f)), Eq (f (List a f))) => Eq (List a f)
 deriving instance (Ord (f (a f)), Ord (f (List a f))) => Ord (List a f)
 
 instance IsBarbie a => IsBarbie (List a) where
-  type Bare (List a) = [Bare a]
+  type Strip (List a) = [Strip a]
 
-  pullOff Nil                               = []
-  pullOff (Cons (Identity x) (Identity xs)) = pullOff x : pullOff xs
+  bstrip Nil                               = []
+  bstrip (Cons (Identity x) (Identity xs)) = bstrip x : bstrip xs
 
-  putOn []       = Nil
-  putOn (x : xs) = Cons (Identity $ putOn x) (Identity $ putOn xs)
+  bcover []       = Nil
+  bcover (x : xs) = Cons (Identity $ bcover x) (Identity $ bcover xs)
 
 instance FunctorB a => FunctorB (List a) where
   bmap _ Nil         = Nil
@@ -62,3 +71,8 @@ instance TraversableB a => TraversableB (List a) where
     xs' <- f xs
     xs'' <- sequenceA $ btraverse f <$> xs'
     pure $ Cons x'' xs''
+
+instance Functor (Flip List) where
+  fmap :: (FunctorB (Flip (Flip List) a), Prelude.Functor f) => (a f -> b f) -> Flip List f a -> Flip List f b
+  fmap _ (Flip Nil) = Flip Nil
+  fmap f (Flip (Cons x xs)) = Flip $ Cons (f <$> x) (runFlip . fmap f . Flip <$> xs)

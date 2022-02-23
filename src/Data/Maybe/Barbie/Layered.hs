@@ -15,12 +15,14 @@ module Data.Maybe.Barbie.Layered
   ( Maybe (..)
   ) where
 
-import           Data.Barbie.Layered   (IsBarbie (Bare, pullOff, putOn))
-import           Data.Functor.Identity (Identity (Identity))
-import           Data.Functor.Layered  (FoldableB (bfoldMap), FunctorB (bmap), TraversableB (btraverse))
-import           GHC.Generics          (Generic)
-import           Prelude               (Applicative (pure), Eq, Monoid (mempty), Ord, Read, Show,
-                                        Traversable (sequenceA), ($), (<$>))
+import           Barbies.Layered             (IsBarbie (Strip, bcover, bstrip))
+import           Barbies.Layered.Functor (FunctorB (bmap))
+import Barbies.Layered.Foldable (FoldableB (bfoldMap))
+import Barbies.Layered.Traversable (TraversableB (btraverse))
+import           Data.Functor.Identity       (Identity (Identity))
+import           GHC.Generics                (Generic)
+import           Prelude                     (Applicative (pure), Eq, Monoid (mempty), Ord, Read, Show,
+                                              Traversable (sequenceA), ($), (<$>))
 import qualified Prelude
 
 #if __GLASGOW_HASKELL__ >= 810
@@ -42,13 +44,13 @@ deriving instance (Eq (f (a f))) => Eq (Maybe a f)
 deriving instance (Ord (f (a f))) => Ord (Maybe a f)
 
 instance IsBarbie a => IsBarbie (Maybe a) where
-  type Bare (Maybe a) = Prelude.Maybe (Bare a)
+  type Strip (Maybe a) = Prelude.Maybe (Strip a)
 
-  pullOff Nothing             = Prelude.Nothing
-  pullOff (Just (Identity a)) = Prelude.Just $ pullOff a
+  bstrip Nothing             = Prelude.Nothing
+  bstrip (Just (Identity a)) = Prelude.Just $ bstrip a
 
-  putOn Prelude.Nothing  = Nothing
-  putOn (Prelude.Just a) = Just $ Identity $ putOn a
+  bcover Prelude.Nothing  = Nothing
+  bcover (Prelude.Just a) = Just $ Identity $ bcover a
 
 instance FunctorB a => FunctorB (Maybe a) where
   bmap _ Nothing  = Nothing
